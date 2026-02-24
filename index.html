@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zevian · Research Survey</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #1e1e2e;
+      --accent: #6c63ff;
+      --accent2: #ff6b6b;
+      --text: #f0f0f5;
+      --muted: #6b6b80;
+      --card-manager: #0f0f1a;
+      --card-freelancer: #0f1a0f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.4;
+      z-index: 0;
+    }
+
+    .glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-1 {
+      background: var(--accent);
+      top: -200px;
+      left: -200px;
+    }
+
+    .glow-2 {
+      background: var(--accent2);
+      bottom: -200px;
+      right: -200px;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(108, 99, 255, 0.1);
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      color: #a09af8;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+      }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(36px, 6vw, 62px);
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 17px;
+      font-weight: 300;
+      text-align: center;
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .time-note {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 64px;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    .time-note svg {
+      opacity: 0.6;
+    }
+
+    /* Role cards */
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      width: 100%;
+      max-width: 740px;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      text-decoration: none;
+      color: var(--text);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      overflow: hidden;
+      cursor: pointer;
+      display: block;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 20px;
+    }
+
+    .card-manager::before {
+      background: radial-gradient(ellipse at top left, rgba(108, 99, 255, 0.12), transparent 60%);
+    }
+
+    .card-freelancer::before {
+      background: radial-gradient(ellipse at top left, rgba(52, 211, 153, 0.12), transparent 60%);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-manager:hover {
+      border-color: rgba(108, 99, 255, 0.5);
+    }
+
+    .card-freelancer:hover {
+      border-color: rgba(52, 211, 153, 0.5);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .card-manager .card-icon {
+      background: rgba(108, 99, 255, 0.15);
+    }
+
+    .card-freelancer .card-icon {
+      background: rgba(52, 211, 153, 0.15);
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+
+    .card-desc {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+      margin-bottom: 28px;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 100px;
+      letter-spacing: 0.04em;
+    }
+
+    .card-manager .tag {
+      background: rgba(108, 99, 255, 0.1);
+      color: #a09af8;
+      border: 1px solid rgba(108, 99, 255, 0.2);
+    }
+
+    .card-freelancer .tag {
+      background: rgba(52, 211, 153, 0.1);
+      color: #6ee7b7;
+      border: 1px solid rgba(52, 211, 153, 0.2);
+    }
+
+    .card-cta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: gap 0.2s ease;
+    }
+
+    .card-manager .card-cta {
+      color: #a09af8;
+    }
+
+    .card-freelancer .card-cta {
+      color: #6ee7b7;
+    }
+
+    .card:hover .card-cta {
+      gap: 12px;
+    }
+
+    /* Questions preview */
+    .preview-section {
+      width: 100%;
+      max-width: 740px;
+      margin-top: 80px;
+      animation: fadeUp 0.6s 0.5s ease both;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .preview-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    .preview-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      display: inline-block;
+    }
+
+    .preview-manager .preview-card-label {
+      background: rgba(108, 99, 255, 0.1);
+      color: #a09af8;
+    }
+
+    .preview-freelancer .preview-card-label {
+      background: rgba(52, 211, 153, 0.1);
+      color: #6ee7b7;
+    }
+
+    .q-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .q-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .q-num {
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .preview-manager .q-num {
+      background: rgba(108, 99, 255, 0.15);
+      color: #a09af8;
+    }
+
+    .preview-freelancer .q-num {
+      background: rgba(52, 211, 153, 0.15);
+      color: #6ee7b7;
+    }
+
+    .q-text {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 80px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      animation: fadeUp 0.6s 0.6s ease both;
+    }
+
+    footer strong {
+      color: var(--text);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .cards,
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+    }
+  </style>
+
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4WC22Z4ZHJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-4WC22Z4ZHJ');
+  </script>
+
+</head>
+
+<body>
+
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+
+  <div class="container">
+
+    <div class="badge">User Research · 2 min</div>
+
+    <h1>Help us build<br><span>Zevian</span> for you</h1>
+
+    <p class="subtitle">We're building the performance management tool for remote teams. Your answers shape what we
+      build first.</p>
+
+    <div class="time-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </svg>
+      Takes about 2–3 minutes · Fully anonymous
+    </div>
+
+    <!-- Role selector cards -->
+    <div class="cards">
+
+      <!-- REPLACE href with your actual Tally manager form link -->
+      <a href="https://tally.so/r/1AlqQp" class="card card-manager" target="_blank" onclick="gtag('event', 'form_click', {
+     'form_type': 'manager',
+     'event_category': 'engagement'
+   })">
+        <div class="card-icon">🧑‍💼</div>
+        <div class="card-title">I manage a team</div>
+        <p class="card-desc">You oversee remote employees or freelancers and need visibility into their work output.</p>
+        <div class="card-tags">
+          <span class="tag">Engineering Manager</span>
+          <span class="tag">Team Lead</span>
+          <span class="tag">Founder</span>
+        </div>
+        <div class="card-cta">
+          Take the Manager survey
+          <span>→</span>
+        </div>
+      </a>
+
+      <!-- REPLACE href with your actual Tally freelancer form link -->
+      <a href="https://tally.so/r/q4d01G" class="card card-freelancer" target="_blank" onclick="gtag('event', 'form_click', {
+     'form_type': 'freelancer',
+     'event_category': 'engagement'
+   })">
+        <div class="card-icon">💻</div>
+        <div class="card-title">I'm a freelancer or remote employee</div>
+        <p class="card-desc">You work remotely and want objective, clear feedback on the quality of your work.</p>
+        <div class="card-tags">
+          <span class="tag">Freelancer</span>
+          <span class="tag">Remote Employee</span>
+          <span class="tag">Contractor</span>
+          </di v>
+          <div class="card-cta">
+            Take the Freelancer survey
+            <span>→</span>
+          </div>
+      </a>
+
+    </div>
+
+
+    <footer>
+      Built by <strong>Zevian</strong> · Your responses are anonymous and used only for product research.<br>
+      <a href="https://zevian.netlify.app"
+        style="color: var(--accent); text-decoration: none; margin-top: 8px; display: inline-block;">← Back to
+        zevian.netlify.app</a>
+    </footer>
+
+  </div>
+
+</body>
+
+</html>
